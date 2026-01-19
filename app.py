@@ -339,7 +339,7 @@ def export_report_pdf_bytes(text: str) -> Optional[bytes]:
     return buf.read()
 
 
-def render_results_panel() -> None:
+def render_results_panel(key_prefix: str) -> None:
     st.subheader("Results")
     if not st.session_state["results"]:
         st.info("No results yet.")
@@ -368,12 +368,12 @@ def render_results_panel() -> None:
         with st.expander(f"{header}  —  {' • '.join(meta_bits)}", expanded=False):
             cols = st.columns([1, 1, 1])
             with cols[0]:
-                if st.button("Add to report", key=f"addrep_{d.id}_{idx}"):
+                if st.button("Add to report", key=f"{key_prefix}_addrep_{d.id}_{idx}"):
                     add_to_report(d)
                     st.success("Added.")
             with cols[1]:
                 copy_text = (d.summary_text or "").strip() or (d.full_text or "")
-                copy_button(copy_text or "(empty)", key=f"copy_{d.id}_{idx}")
+                copy_button(copy_text or "(empty)", key=f"{key_prefix}_copy_{d.id}_{idx}")
             with cols[2]:
                 if d.url:
                     st.link_button("Open source", d.url)
@@ -470,7 +470,7 @@ with tabs[0]:
                 add_result(find_conjunction(norm(conj_a) or "", norm(conj_b) or ""))
 
     with left:
-        render_results_panel()
+        render_results_panel("simple")
 
 
 # -----------------------------
@@ -559,7 +559,7 @@ with tabs[1]:
                 add_result(find_conjunction(a, b))
 
     with left:
-        render_results_panel()
+        render_results_panel("chart")
 
 
 # -----------------------------
@@ -590,7 +590,7 @@ with tabs[2]:
         st.caption("Conjunction lookup uses URL token patterns and title fallback.")
 
     with left:
-        render_results_panel()
+        render_results_panel("aspect")
 
 
 # -----------------------------
